@@ -196,11 +196,14 @@ void onMouseButton(int button, int state, int x, int y)
 
 void show_fractal(int argc, char** argv)
 {
+	std::cout<<"Turbo Fractal"<<std::endl;
+	std::cout<<"https://github.com/Arash-codedev/turboFractal"<<std::endl<<std::endl;
+	
 	glutInit(&argc, argv);
 	glutInitWindowSize (screen_width, screen_height);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowPosition (100, 100);
-	glutCreateWindow ("Mandelbrot by Arash Mohammadi");
+	glutCreateWindow("Turbo Fractal");
 
 	init();
 	glutKeyboardFunc(keyPressed);

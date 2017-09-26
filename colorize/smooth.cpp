@@ -1,12 +1,5 @@
 #include "smooth.hpp"
 
-float approx_smooth(float x,float ref)
-{
-	return float(exp(-std::abs(x-ref)*5.0));
-}
-
-#include <iostream>
-
 void smooth(
 	RawPixel pixels_index[screen_height][screen_width],
 	Color pixels_rendered[screen_height][screen_width])

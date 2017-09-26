@@ -9,7 +9,7 @@ struct Pixel
 	int count;
 };
 
-bool not_all_negative(std::vector<int> v)
+bool not_all_negative(const std::vector<int> &v)
 {
 	for(int i:v)
 		if(i>=0)

@@ -1,10 +1,5 @@
 #include "escape_time.hpp"
 
-float approx_et(float x,float ref)
-{
-	return float(exp(-std::abs(x-ref)*5.0));
-}
-
 void escape_time(RawPixel pixels_index[screen_height][screen_width],Color pixels_rendered[screen_height][screen_width])
 {
 	std::vector<Color> palette={

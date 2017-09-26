@@ -32,3 +32,7 @@ Mouse click: center
 9: zoom reset to window size 1e-40
 
 
+
+![The Mandelbrot set](https://user-images.githubusercontent.com/11730626/30860185-9dfb2452-a309-11e7-86ab-14e03a4e224d.png)
+
+
