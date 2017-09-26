@@ -11,7 +11,7 @@ Zoom a lot and the resolution does not drop.
 # buid
 ./build.sh && ./turbo-fractal
 
-#How to use?
+# How to use?
 Mouse click: center
 +: zoom in 1.5
 -: zoom out 1.5
