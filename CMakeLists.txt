@@ -64,22 +64,6 @@ add_executable(turbo-fractal
 target_link_libraries(turbo-fractal ${Boost_LIBRARIES})
 target_link_libraries(turbo-fractal ${CMAKE_THREAD_LIBS_INIT})
 
-find_package(OpenSSL)
-target_link_libraries(turbo-fractal ${OPENSSL_LIBRARIES})
-target_link_libraries(turbo-fractal ${SSL_LIB})
-target_link_libraries(turbo-fractal ${CRYPTO_LIB})
-
-
-if(OPENSSL_FOUND)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_OPENSSL")
-    target_link_libraries(turbo-fractal ${OPENSSL_LIBRARIES})
-    include_directories(SYSTEM ${OPENSSL_INCLUDE_DIR})
-endif()
-
-if(MSYS)
-    target_link_libraries(turbo-fractal ws2_32 wsock32)
-endif()
-
 # post executable commands
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
@@ -87,7 +71,7 @@ include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS})
 target_link_libraries(turbo-fractal ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
 
 find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
-target_link_libraries(turbo-fractal ${SDL2_LIBRARIES})
+#include_directories(${SDL2_INCLUDE_DIRS})
+#target_link_libraries(turbo-fractal ${SDL2_LIBRARIES})
 target_link_libraries(turbo-fractal gmp)
 
