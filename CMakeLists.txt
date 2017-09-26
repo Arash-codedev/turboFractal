@@ -5,7 +5,7 @@
 
 
 cmake_minimum_required(VERSION 2.8.9)
-project (main)
+project (turbo-fractal)
 
 find_package(Threads)
 
@@ -49,45 +49,45 @@ include_directories(${Boost_INCLUDE_DIRS})
 # pre executable commands
 
 
-add_executable(main
+add_executable(turbo-fractal
     types/complex.cpp
     manager/manager.cpp
     fractal/mandelbrot.cpp
     fractal/fast_mandelbrot.cpp
     colorize/escape_time.cpp
     colorize/smooth.cpp
-    main.cpp
+    turbo-fractal.cpp
 )
 
 
 # Link
-target_link_libraries(main ${Boost_LIBRARIES})
-target_link_libraries(main ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(turbo-fractal ${Boost_LIBRARIES})
+target_link_libraries(turbo-fractal ${CMAKE_THREAD_LIBS_INIT})
 
 find_package(OpenSSL)
-target_link_libraries(main ${OPENSSL_LIBRARIES})
-target_link_libraries(main ${SSL_LIB})
-target_link_libraries(main ${CRYPTO_LIB})
+target_link_libraries(turbo-fractal ${OPENSSL_LIBRARIES})
+target_link_libraries(turbo-fractal ${SSL_LIB})
+target_link_libraries(turbo-fractal ${CRYPTO_LIB})
 
 
 if(OPENSSL_FOUND)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_OPENSSL")
-    target_link_libraries(main ${OPENSSL_LIBRARIES})
+    target_link_libraries(turbo-fractal ${OPENSSL_LIBRARIES})
     include_directories(SYSTEM ${OPENSSL_INCLUDE_DIR})
 endif()
 
 if(MSYS)
-    target_link_libraries(main ws2_32 wsock32)
+    target_link_libraries(turbo-fractal ws2_32 wsock32)
 endif()
 
 # post executable commands
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS})
-target_link_libraries(main ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+target_link_libraries(turbo-fractal ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
 
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
-target_link_libraries(main ${SDL2_LIBRARIES})
-target_link_libraries(main gmp)
+target_link_libraries(turbo-fractal ${SDL2_LIBRARIES})
+target_link_libraries(turbo-fractal gmp)
 
