@@ -12,10 +12,10 @@
 // };
 
 Zone zone {
-"-0.01712985905303870806655386579198073717345673627975",
-"1.0066502118237216019272457126712419103917799980323",
-"3.1913115432519800944242947387594453061954601850088e-45",
-"3.1913115432519800944242947387594453061954601850088e-45"
+"-0.017129859053038708066553865791980737173456736280136",
+"1.0066502118237216019272457126712419103917799980319",
+"3.1913115432519800944242947387594453061954601850088e-60",
+"3.1913115432519800944242947387594453061954601850088e-60"
 };
 
 RawPixel pixels_index[screen_height][screen_width];
@@ -182,8 +182,8 @@ void onMouseButton(int button, int state, int x, int y)
 	{
 		if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 		{
-			zone.center_x+=(float(x)/float(screen_width)-0.5)*float(zone.fractal_width);
-			zone.center_y-=(float(y)/float(screen_height)-0.5)*float(zone.fractal_height);
+			zone.center_x+=(number(x)/number(screen_width)-number(0.5))*number(zone.fractal_width);
+			zone.center_y-=(number(y)/number(screen_height)-number(0.5))*number(zone.fractal_height);
 			print_coordinates();
 			std::cout<<"rendering..."<<std::endl;
 			RefreshFractal();

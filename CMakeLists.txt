@@ -42,7 +42,7 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIR})
 # Flags
 set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wconversion -Wfatal-errors -Wextra -std=c++11")
 set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g3")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -s")
 
 include_directories(${Boost_INCLUDE_DIRS}) 
 

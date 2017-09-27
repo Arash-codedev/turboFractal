@@ -6,10 +6,10 @@
 
 int main(int argc, char** argv)
 {
-	// fractal_function=mandelbrot;
-	fractal_function=fast_mandelbrot;
-	// colorize_function=escape_time;
-	colorize_function=smooth;
+	fractal_function=mandelbrot;
+	// fractal_function=fast_mandelbrot;
+	colorize_function=escape_time;
+	// colorize_function=smooth;
 	show_fractal(argc,argv);
 	return 0;
 }
