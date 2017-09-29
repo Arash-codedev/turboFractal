@@ -1,6 +1,6 @@
-#include "smooth.hpp"
+#include "last_angle.hpp"
 
-void smooth(
+void last_angle(
 	RawPixel pixels_index[screen_height][screen_width],
 	Color pixels_rendered[screen_height][screen_width],
 	const std::vector<PixelIndex> &indices_todo)
@@ -25,8 +25,6 @@ void smooth(
 		{0.4f,0.2f,0.0f}
 	};
 
-
-
 	for(PixelIndex pix_idx:indices_todo)
 	{
 		int j=pix_idx.j;
@@ -34,10 +32,7 @@ void smooth(
 		double x=double(pixels_index[j][i].x);
 		double y=double(pixels_index[j][i].y);
 	
-		double r2=x*x+y*y;
-		double log_zn=log(r2)/2.0;
-		double nu=log(log_zn/log(2))/log(2);
-		float idx=float(pixels_index[j][i].count)-float(nu);
+		float idx=float((atan2(x,y)/3.1415626/2.0+0.5)*17.0);
 		int idx1=int(floor(idx)+0.1);
 		idx1%=(int)palette.size();
 		int idx2=(idx1+1)%(int)palette.size();

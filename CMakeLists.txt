@@ -56,7 +56,8 @@ add_executable(turbo-fractal
     fractal/fast_mandelbrot.cpp
     colorize/escape_time.cpp
     colorize/smooth.cpp
-    turbo-fractal.cpp
+    colorize/last_angle.cpp
+   turbo-fractal.cpp
 )
 
 

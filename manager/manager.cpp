@@ -2,29 +2,20 @@
 #include <GL/gl.h>
 #include <GL/glut.h>
 #include <iostream>
+#include <boost/chrono.hpp>
+#include <boost/thread/thread.hpp> 
 #include <stdexcept>
+#include <thread>
+#include <mutex>
 
-// Zone zone {
-// "0.0",
-// "1.0",
-// "1e-300",
-// "1e-300",
-// };
-
-Zone zone {
-"-0.017129859053038708066553865791980737173456736280136",
-"1.0066502118237216019272457126712419103917799980319",
-"3.1913115432519800944242947387594453061954601850088e-60",
-"3.1913115432519800944242947387594453061954601850088e-60"
-};
-
-RawPixel pixels_index[screen_height][screen_width];
+Zone zone;
+std::mutex plot_mutex;
+RawPixel pixels_raw[screen_height][screen_width];
 Color pixels_rendered[screen_height][screen_width];
 
 Fractal_Function fractal_function = nullptr;
 Colorizer_Function colorize_function = nullptr;
 const double size_1=1.5;
-
 
 void init()
 {
@@ -34,16 +25,14 @@ void init()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(0, screen_width, 0, screen_height);
-
-glEnable(GL_MULTISAMPLE);
-glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
-
-
+	glEnable(GL_MULTISAMPLE);
+	glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 	RefreshFractal();
 }
 
 void onDisplay()
 {
+	std::lock_guard<std::mutex> guard(plot_mutex);
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDrawPixels(screen_width, screen_height, GL_RGB, GL_FLOAT, pixels_rendered);
@@ -54,7 +43,7 @@ void print_coordinates()
 {
 	std::cout.precision(digits);
 	std::cout<<"center ("<<zone.center_x<<", "<<zone.center_y<<") ";
-	std::cout<<", window ("<<zone.fractal_width<<", "<<zone.fractal_height<<")";
+	std::cout<<", window_size ("<<zone.window_size<<")";
 	std::cout<<std::endl;
 }
 
@@ -66,68 +55,36 @@ void keyPressed(unsigned char key, int /*x*/, int /*y*/)
 			exit(0);
 			break;
 		case '+':
-			zone.fractal_width/=number(size_1);
-			zone.fractal_height/=number(size_1);
-			print_coordinates();
-			std::cout<<"rendering..."<<std::endl;
+			zone.window_size/=number(size_1);
 			RefreshFractal();
-			std::cout<<"ready"<<std::endl;
 			break;
 		case '-':
-			zone.fractal_width*=number(size_1);
-			zone.fractal_height*=number(size_1);
-			print_coordinates();
-			std::cout<<"rendering..."<<std::endl;
+			zone.window_size*=number(size_1);
 			RefreshFractal();
-			std::cout<<"ready"<<std::endl;
 			break;
 		case '[':
-			zone.fractal_width/=number(10);
-			zone.fractal_height/=number(10);
-			print_coordinates();
-			std::cout<<"rendering..."<<std::endl;
+			zone.window_size/=number(10);
 			RefreshFractal();
-			std::cout<<"ready"<<std::endl;
 			break;
 		case ']':
-			zone.fractal_width*=number(10);
-			zone.fractal_height*=number(10);
-			print_coordinates();
-			std::cout<<"rendering..."<<std::endl;
+			zone.window_size*=number(10);
 			RefreshFractal();
-			std::cout<<"ready"<<std::endl;
 			break;
 		case '{':
-			zone.fractal_width/=number(100);
-			zone.fractal_height/=number(100);
-			print_coordinates();
-			std::cout<<"rendering..."<<std::endl;
+			zone.window_size/=number(100);
 			RefreshFractal();
-			std::cout<<"ready"<<std::endl;
 			break;
 		case '}':
-			zone.fractal_width*=number(100);
-			zone.fractal_height*=number(100);
-			print_coordinates();
-			std::cout<<"rendering..."<<std::endl;
+			zone.window_size*=number(100);
 			RefreshFractal();
-			std::cout<<"ready"<<std::endl;
 			break;
 		case '0':
-			zone.fractal_width=number(1);
-			zone.fractal_height=number(1);
-			print_coordinates();
-			std::cout<<"rendering..."<<std::endl;
+			zone.window_size=number(1);
 			RefreshFractal();
-			std::cout<<"ready"<<std::endl;
 			break;
 		case '9':
-			zone.fractal_width=number(1e-40);
-			zone.fractal_height=number(1e-40);
-			print_coordinates();
-			std::cout<<"rendering..."<<std::endl;
+			zone.window_size=number(1e-40);
 			RefreshFractal();
-			std::cout<<"ready"<<std::endl;
 			break;
 	}
 	glutPostRedisplay();
@@ -141,35 +98,23 @@ void special_keyPressed(int key, int /*x*/, int /*y*/)
 			exit(0);
 			break;
 		case GLUT_KEY_UP:
-			zone.center_y+=zone.fractal_height/number(size_1);
-			print_coordinates();
-			std::cout<<"rendering..."<<std::endl;
+			zone.center_y+=zone.get_height()/number(size_1);
 			RefreshFractal();
-			std::cout<<"ready"<<std::endl;
 			break;
 
 		case GLUT_KEY_DOWN:
-			zone.center_y-=zone.fractal_height/number(size_1);
-			print_coordinates();
-			std::cout<<"rendering..."<<std::endl;
+			zone.center_y-=zone.get_height()/number(size_1);
 			RefreshFractal();
-			std::cout<<"ready"<<std::endl;
 			break;
 
 		case GLUT_KEY_LEFT:
-			zone.center_x-=zone.fractal_width/number(size_1);
-			print_coordinates();
-			std::cout<<"rendering..."<<std::endl;
+			zone.center_x-=zone.get_width()/number(size_1);
 			RefreshFractal();
-			std::cout<<"ready"<<std::endl;
 			break;
 
 		case GLUT_KEY_RIGHT:
-			zone.center_x+=zone.fractal_width/number(size_1);
-			print_coordinates();
-			std::cout<<"rendering..."<<std::endl;
+			zone.center_x+=zone.get_width()/number(size_1);
 			RefreshFractal();
-			std::cout<<"ready"<<std::endl;
 			break;
 	}
 	glutPostRedisplay();
@@ -182,12 +127,9 @@ void onMouseButton(int button, int state, int x, int y)
 	{
 		if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 		{
-			zone.center_x+=(number(x)/number(screen_width)-number(0.5))*number(zone.fractal_width);
-			zone.center_y-=(number(y)/number(screen_height)-number(0.5))*number(zone.fractal_height);
-			print_coordinates();
-			std::cout<<"rendering..."<<std::endl;
+			zone.center_x+=(number(x)/number(screen_width)-number(0.5))*zone.get_width();
+			zone.center_y-=(number(y)/number(screen_height)-number(0.5))*zone.get_height();
 			RefreshFractal();
-			std::cout<<"ready"<<std::endl;
 		}
 	}
 	mouse_pressed=(state == GLUT_DOWN);
@@ -213,6 +155,15 @@ void show_fractal(int argc, char** argv)
 	glutMainLoop();
 }
 
+void plot_thread(
+	const std::vector<PixelIndex> &indices_todo,
+	bool *done, // when passing by reference, gcc faces with eror
+	int max_iteration)
+{
+	fractal_function(zone,pixels_raw,indices_todo,max_iteration);
+	colorize_function(pixels_raw,pixels_rendered,indices_todo);
+	*done=true;
+}
 
 void RefreshFractal()
 {
@@ -221,7 +172,60 @@ void RefreshFractal()
 	if(colorize_function==nullptr)
 		throw std::runtime_error("colorize_function is not assigned");
 
-	fractal_function(zone,pixels_index);
-	colorize_function(pixels_index,pixels_rendered);
+	static bool is_running=false;
+	while(is_running)
+	{
+		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+	}
+	is_running=true;
+
+	print_coordinates();
+	std::cout<<"rendering..."<<std::endl;
+	constexpr int N_groups=100;
+	std::vector<std::vector<PixelIndex>> indices_list(N_groups);
+	bool indices_done[N_groups];
+	for(auto &v:indices_list)
+		v.reserve(screen_height*screen_width*6/N_groups);
+	for(bool &done:indices_done)
+		done=false;
+
+	for(int j=0;j<screen_height;j++)
+		for(int i=0;i<screen_width;i++)
+		{
+			pixels_raw[j][i]={1.0f,1.0f,0};
+			pixels_rendered[j][i]={0.0f,0.0f,0.0f};
+			PixelIndex p;
+			p.i=i;
+			p.j=j;
+			p.done=false;
+			indices_list[rand()%N_groups].push_back(p);
+		}
+	std::vector<std::thread> workers;
+	const int max_iteration=300;
+	for(int i=0;i<N_groups;i++)
+	{
+		workers.push_back(std::thread(plot_thread,indices_list[i],&indices_done[i],max_iteration));
+	}
+
+	int last_done_count=-1;
+	int done_count=0;
+	do
+	{
+		done_count=0;
+		for(bool &done:indices_done)
+			if(done)
+				done_count++;
+		if(done_count!=last_done_count)
+			onDisplay();
+		last_done_count=done_count;
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+	}
+	while(done_count<N_groups);
+
+	for(std::thread &w:workers)
+		w.join();
+	onDisplay();
+	std::cout<<"ready"<<std::endl;
+	is_running=false;
 }
 

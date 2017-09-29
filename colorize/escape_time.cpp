@@ -1,6 +1,9 @@
 #include "escape_time.hpp"
 
-void escape_time(RawPixel pixels_index[screen_height][screen_width],Color pixels_rendered[screen_height][screen_width])
+void escape_time(
+	RawPixel pixels_index[screen_height][screen_width],
+	Color pixels_rendered[screen_height][screen_width],
+	const std::vector<PixelIndex> &indices_todo)
 {
 	std::vector<Color> palette={
 		{0.0f,0.0f,0.0f},
@@ -22,14 +25,14 @@ void escape_time(RawPixel pixels_index[screen_height][screen_width],Color pixels
 		{0.4f,0.2f,0.0f}
 	};
 
-	for(int j=0;j<screen_height;j++)
-		for(int i=0;i<screen_width;i++)
-		{
-			int index=pixels_index[j][i].count%int(palette.size());
-			pixels_rendered[j][i].r = palette[index].r;
-			pixels_rendered[j][i].g = palette[index].g;
-			pixels_rendered[j][i].b = palette[index].b;
-
-		}
+	for(PixelIndex pix_idx:indices_todo)
+	{
+		int j=pix_idx.j;
+		int i=pix_idx.i;
+		int index=pixels_index[j][i].count%int(palette.size());
+		pixels_rendered[j][i].r = palette[index].r;
+		pixels_rendered[j][i].g = palette[index].g;
+		pixels_rendered[j][i].b = palette[index].b;
+	}
 }
 
